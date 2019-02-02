@@ -1,0 +1,85 @@
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../paper-toast/paper-toast.html">
+
+<dom-module id="casper-toast">
+  <template>
+    <style>
+      paper-toast {
+        --paper-toast-background-color: var(--primary-color);
+        --paper-toast-color: white;
+        width: 100%;
+        font-weight: bold;
+        align-items: center;
+        display: inline-flex;
+        justify-content: space-between;
+      }
+
+      paper-toast[success] {
+        --paper-toast-background-color: #4a9a4a;
+        --paper-toast-color: white;
+      }
+    </style>
+
+    <paper-toast
+      text="[[text]]"
+      duration="[[duration]]">
+      <iron-icon icon="casper-icons:cancel"/></iron-icon>
+    </paper-toast>
+  </template>
+
+  <script>
+    'use strict';
+
+    class CasperToast extends Polymer.Element {
+
+      static get is () {
+        return 'casper-toast';
+      }
+
+      static get properties() {
+        return {
+          duration: {
+            type: Number,
+            value: 5000
+          },
+          text: {
+            type: String
+          },
+          backgroundColor: {
+            type: String,
+            observer: '_backgroundColorChanged'
+          }
+        };
+      }
+
+      ready () {
+        super.ready();
+
+        this._toast = this.shadowRoot.querySelector('paper-toast');
+        this._closeIcon = this.shadowRoot.querySelector('iron-icon');
+
+        // Add event listeners.
+        this._closeIcon.addEventListener('click', event => this._closeIconClicked(event));
+      }
+
+      open () {
+        this._toast.open();
+      }
+
+      close () {
+        this._toast.close();
+      }
+
+      _closeIconClicked (event) {
+        this._toast.close();
+      }
+
+      _backgroundColorChanged (backgroundColor) {
+        this._toast.style.backgroundColor = backgroundColor;
+      }
+    }
+
+    window.customElements.define(CasperToast.is, CasperToast);
+  </script>
+</dom-module>

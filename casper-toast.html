@@ -16,9 +16,7 @@
       }
     </style>
 
-    <paper-toast
-      text="[[text]]"
-      duration="[[duration]]">
+    <paper-toast text="[[text]]" duration="[[duration]]">
       <iron-icon icon="casper-icons:cancel"/></iron-icon>
     </paper-toast>
   </template>
@@ -55,6 +53,7 @@
         this._closeIcon = this.shadowRoot.querySelector('iron-icon');
 
         // Add event listeners.
+        this._toast.addEventListener('iron-overlay-closed', () => this._resetDefaults());
         this._closeIcon.addEventListener('click', event => this._closeIconClicked(event));
       }
 
@@ -71,7 +70,15 @@
       }
 
       _backgroundColorChanged (backgroundColor) {
-        this._toast.style.backgroundColor = backgroundColor;
+        Polymer.RenderStatus.afterNextRender(this._toast, () => {
+          this._toast.style.backgroundColor = backgroundColor;
+        });
+      }
+
+      _resetDefaults () {
+        this.text = '';
+        this.duration = 5000;
+        this.backgroundColor = '';
       }
     }
 

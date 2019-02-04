@@ -16,7 +16,10 @@
       }
     </style>
 
-    <paper-toast text="[[text]]" duration="[[duration]]">
+    <paper-toast
+      text="[[text]]"
+      fit-into="[[fitInto]]"
+      duration="[[duration]]">
       <iron-icon icon="casper-icons:cancel"/></iron-icon>
     </paper-toast>
   </template>
@@ -32,6 +35,9 @@
 
       static get properties() {
         return {
+          fitInto: {
+            type: Object
+          },
           duration: {
             type: Number,
             value: 5000

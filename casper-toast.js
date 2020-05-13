@@ -20,7 +20,7 @@ class CasperToast extends PolymerElement {
       </style>
 
       <paper-toast text="[[text]]" fit-into="[[fitInto]]" duration="[[duration]]">
-        <iron-icon icon="casper-icons:cancel"></iron-icon>
+        <iron-icon style="flex-shrink: 0;" icon="casper-icons:cancel"></iron-icon>
       </paper-toast>
     `;
   }

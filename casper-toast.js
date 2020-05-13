@@ -40,12 +40,8 @@ class CasperToast extends PolymerElement {
 
         paper-toast:hover {
           cursor: pointer;
-          -webkit-filter: brightness(80%);
-          -webkit-transition: all 1s ease;
-          -moz-transition: all 1s ease;
-          -o-transition: all 1s ease;
-          -ms-transition: all 1s ease;
-          transition: all 1s ease;
+          filter: brightness(80%);
+          transition: filter 1s ease;
         }
       </style>
 

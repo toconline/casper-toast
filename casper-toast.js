@@ -1,4 +1,24 @@
-import '@polymer/iron-icon/iron-icon.js';
+/*
+  - Copyright (c) 2014-2020 Cloudware S.A. All rights reserved.
+  -
+  - This file is part of casper-toast.
+  -
+  - casper-toast is free software: you can redistribute it and/or modify
+  - it under the terms of the GNU Affero General Public License as published by
+  - the Free Software Foundation, either version 3 of the License, or
+  - (at your option) any later version.
+  -
+  - casper-toast  is distributed in the hope that it will be useful,
+  - but WITHOUT ANY WARRANTY; without even the implied warranty of
+  - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  - GNU General Public License for more details.
+  -
+  - You should have received a copy of the GNU Affero General Public License
+  - along with casper-toast.  If not, see <http://www.gnu.org/licenses/>.
+  -
+ */
+
+//import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/paper-toast/paper-toast.js';
 import '@cloudware-casper/casper-icons/casper-icons.js';
 import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
@@ -17,10 +37,20 @@ class CasperToast extends PolymerElement {
           display: inline-flex;
           justify-content: space-between;
         }
+
+        paper-toast:hover {
+          cursor: pointer;
+          -webkit-filter: brightness(80%);
+          -webkit-transition: all 1s ease;
+          -moz-transition: all 1s ease;
+          -o-transition: all 1s ease;
+          -ms-transition: all 1s ease;
+          transition: all 1s ease;
+        }
       </style>
 
       <paper-toast text="[[text]]" fit-into="[[fitInto]]" duration="[[duration]]">
-        <iron-icon style="flex-shrink: 0;" icon="casper-icons:cancel"></iron-icon>
+        <casper-icon style="flex-shrink: 0;" icon="fa-solid:times-circle"></casper-icon>
       </paper-toast>
     `;
   }
@@ -52,11 +82,11 @@ class CasperToast extends PolymerElement {
     super.ready();
 
     this._toast = this.shadowRoot.querySelector('paper-toast');
-    this._closeIcon = this.shadowRoot.querySelector('iron-icon');
+    this._closeIcon = this.shadowRoot.querySelector('casper-icon');
 
     // Add event listeners.
     this._toast.addEventListener('iron-overlay-closed', () => this._resetDefaults());
-    this._closeIcon.addEventListener('click', event => this._closeIconClicked(event));
+    this._toast.addEventListener('click', event => this._toast.close());
   }
 
   open () {
@@ -64,10 +94,6 @@ class CasperToast extends PolymerElement {
   }
 
   close () {
-    this._toast.close();
-  }
-
-  _closeIconClicked (event) {
     this._toast.close();
   }
 

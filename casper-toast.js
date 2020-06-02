@@ -18,7 +18,6 @@
   -
  */
 
-//import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/paper-toast/paper-toast.js';
 import '@cloudware-casper/casper-icons/casper-icons.js';
 import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
@@ -29,13 +28,12 @@ class CasperToast extends PolymerElement {
     return html`
       <style>
         paper-toast {
-          --paper-toast-background-color: var(--primary-color);
-          --paper-toast-color: white;
           width: 100%;
+          display: flex;
           font-weight: bold;
           align-items: center;
-          display: inline-flex;
-          justify-content: space-between;
+          --paper-toast-color: white;
+          --paper-toast-background-color: var(--primary-color);
         }
 
         paper-toast:hover {
@@ -43,10 +41,21 @@ class CasperToast extends PolymerElement {
           filter: brightness(80%);
           transition: filter 1s ease;
         }
+
+        paper-toast casper-icon {
+          width: 20px;
+          height: 20px;
+          flex-shrink: 0;
+        }
+
+        paper-toast #content {
+          flex-grow: 1;
+        }
       </style>
 
-      <paper-toast text="[[text]]" fit-into="[[fitInto]]" duration="[[duration]]">
-        <casper-icon style="flex-shrink: 0;" icon="fa-solid:times-circle"></casper-icon>
+      <paper-toast id="toast" fit-into="[[fitInto]]" duration="[[duration]]">
+        <div id="content"></div>
+        <casper-icon icon="fa-solid:times-circle"></casper-icon>
       </paper-toast>
     `;
   }
@@ -57,19 +66,40 @@ class CasperToast extends PolymerElement {
 
   static get properties() {
     return {
+      /**
+       * The DOM element in which the component should fit into.
+       *
+       * @type {Object}
+       */
       fitInto: {
         type: Object
       },
+      /**
+       * The duration in milliseconds that the component should stay open before auto-closing.
+       *
+       * @type {Number}
+       */
       duration: {
         type: Number,
         value: 5000
       },
+      /**
+       * The text / HTML that will be displayed in the paper-toast.
+       *
+       * @type {String}
+       */
       text: {
-        type: String
+        type: String,
+        observer: '__textChanged'
       },
+      /**
+       * The paper-toast's background color.
+       *
+       * @type {String}
+       */
       backgroundColor: {
         type: String,
-        observer: '_backgroundColorChanged'
+        observer: '__backgroundColorChanged'
       }
     };
   }
@@ -77,31 +107,49 @@ class CasperToast extends PolymerElement {
   ready () {
     super.ready();
 
-    this._toast = this.shadowRoot.querySelector('paper-toast');
-    this._closeIcon = this.shadowRoot.querySelector('casper-icon');
-
     // Add event listeners.
-    this._toast.addEventListener('iron-overlay-closed', () => this._resetDefaults());
-    this._toast.addEventListener('click', event => this._toast.close());
+    this.$.toast.addEventListener('click', () => this.close());
+    this.$.toast.addEventListener('opened-changed', event => this.__onOpenedChanged(event));
   }
 
+  /**
+   * Opens the paper-toast component.
+   */
   open () {
-    this._toast.open();
+    this.$.toast.open();
   }
 
+  /**
+   * Closes the paper-toast component.
+   */
   close () {
-    this._toast.close();
+    this.$.toast.close();
   }
 
-  _backgroundColorChanged (backgroundColor) {
-    afterNextRender(this._toast, () => {
-      this._toast.style.backgroundColor = backgroundColor;
-    });
+  /**
+   * Observer that is fired when the text property changes.
+   */
+  __textChanged () {
+    this.$.content.innerHTML = this.text;
   }
 
-  _resetDefaults () {
+  /**
+   * Observer that is fired when the background color property changes.
+   */
+  __backgroundColorChanged () {
+    this.$.toast.style.backgroundColor = this.backgroundColor;
+  }
+
+  /**
+   * This method gets fired everytime the paper-toast component either opens or closes.
+   *
+   * @param {Object} event The event's object.
+   */
+  __onOpenedChanged (event) {
+    // This means the toast just opened.
+    if (event.detail.value) return;
+
     this.text = '';
-    this.duration = 5000;
     this.backgroundColor = '';
   }
 }

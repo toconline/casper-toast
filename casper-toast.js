@@ -107,9 +107,7 @@ class CasperToast extends PolymerElement {
   ready () {
     super.ready();
 
-    // Add event listeners.
     this.$.toast.addEventListener('click', () => this.close());
-    this.$.toast.addEventListener('opened-changed', event => this.__onOpenedChanged(event));
   }
 
   /**
@@ -138,19 +136,6 @@ class CasperToast extends PolymerElement {
    */
   __backgroundColorChanged () {
     this.$.toast.style.backgroundColor = this.backgroundColor;
-  }
-
-  /**
-   * This method gets fired everytime the paper-toast component either opens or closes.
-   *
-   * @param {Object} event The event's object.
-   */
-  __onOpenedChanged (event) {
-    // This means the toast just opened.
-    if (event.detail.value) return;
-
-    this.text = '';
-    this.backgroundColor = '';
   }
 }
 

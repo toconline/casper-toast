@@ -19,12 +19,12 @@
  */
 
 import '@polymer/paper-toast/paper-toast.js';
-import '@cloudware-casper/casper-icons/casper-icons.js';
+import '@cloudware-casper/casper-icons/casper-icon.js';
 import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
-import { afterNextRender } from '@polymer/polymer/lib/utils/render-status.js';
 
 class CasperToast extends PolymerElement {
-  static get template() {
+
+  static get template () {
     return html`
       <style>
         paper-toast {
@@ -60,11 +60,7 @@ class CasperToast extends PolymerElement {
     `;
   }
 
-  static get is () {
-    return 'casper-toast';
-  }
-
-  static get properties() {
+  static get properties () {
     return {
       /**
        * The DOM element in which the component should fit into.
@@ -139,4 +135,4 @@ class CasperToast extends PolymerElement {
   }
 }
 
-window.customElements.define(CasperToast.is, CasperToast);
+window.customElements.define('casper-toast', CasperToast);

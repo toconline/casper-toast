@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@cloudware-casper/casper-icons@^1.x":
-  version "1.21.0"
-  resolved "https://npm.pkg.github.com/download/@cloudware-casper/casper-icons/1.21.0/0ac31ef5d88e027946ff8e94f7de89b60bad3a58fe33ca0bb803c270a8254b0d#2b88308f550de4e06b6b4ef9f92af782efd37bf9"
-  integrity sha512-nSsT+OYV+0c1n4Ya4UqasoTNLBr+9NU8yRV9IRdhprgpoVIiK2lJHjsKww5I6Ab2Cz6hmPLkcwwdJYDQv3m9xg==
+"@cloudware-casper/casper-icons@^2.x":
+  version "2.0.0"
+  resolved "https://npm.pkg.github.com/download/@cloudware-casper/casper-icons/2.0.0/02282bd9eb18bb2f92a8bb8a9b8a72a7b22cd553b7d6d7c4e173e28c7d2324c7#4530bba4d403280c603e1c971707ce5106449ecb"
+  integrity sha512-ohFaNY6h4BVdKvX3ljKuRGui4VNZKqgNxlpdQc0caq5SnpBsHigQ3vQxBiTwy/krAAeFnBmmPXZGI6YvDtWW7w==
   dependencies:
     "@polymer/polymer" "^3.x"
 

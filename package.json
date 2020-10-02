@@ -1,6 +1,6 @@
 {
   "name": "@cloudware-casper/casper-toast",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "main": "casper-toast.js",
   "dependencies": {
     "@cloudware-casper/casper-icons": "^2.x",

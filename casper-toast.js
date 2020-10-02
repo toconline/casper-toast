@@ -50,6 +50,7 @@ class CasperToast extends PolymerElement {
 
         paper-toast #content {
           flex-grow: 1;
+          white-space: pre-line;
         }
       </style>
 

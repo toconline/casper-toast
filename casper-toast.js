@@ -52,6 +52,14 @@ class CasperToast extends PolymerElement {
           flex-grow: 1;
           white-space: pre-line;
         }
+
+        paper-toast #content a {
+          color: var(--primary-color);
+          background-color: white;
+          padding: 2px 6px;
+          text-decoration: underline;
+        }
+
       </style>
 
       <paper-toast id="toast" fit-into="[[fitInto]]" duration="[[duration]]">

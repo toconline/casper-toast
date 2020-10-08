@@ -27,13 +27,18 @@ class CasperToast extends PolymerElement {
   static get template () {
     return html`
       <style>
+
+        :host {
+          --background-color: var(--primary-color);
+        }
+
         paper-toast {
           width: 100%;
           display: flex;
           font-weight: bold;
           align-items: center;
           --paper-toast-color: white;
-          --paper-toast-background-color: var(--primary-color);
+          --paper-toast-background-color: var(--background-color);
         }
 
         paper-toast:hover {
@@ -54,7 +59,7 @@ class CasperToast extends PolymerElement {
         }
 
         paper-toast #content a {
-          color: var(--primary-color);
+          color: var(--background-color);
           background-color: white;
           padding: 2px 6px;
           text-decoration: underline;
@@ -140,7 +145,7 @@ class CasperToast extends PolymerElement {
    * Observer that is fired when the background color property changes.
    */
   __backgroundColorChanged () {
-    this.$.toast.style.backgroundColor = this.backgroundColor;
+    this.style.setProperty('--background-color', this.backgroundColor);
   }
 }
 

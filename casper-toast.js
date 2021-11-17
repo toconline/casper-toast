@@ -32,6 +32,10 @@ class CasperToast extends PolymerElement {
           --background-color: var(--primary-color);
         }
 
+        :host[hidden] {
+          display: none;
+        }
+
         paper-toast {
           width: 100%;
           display: flex;
@@ -124,6 +128,7 @@ class CasperToast extends PolymerElement {
    * Opens the paper-toast component.
    */
   open () {
+    this.removeAttribute('hidden');
     this.$.toast.open();
   }
 
@@ -131,6 +136,7 @@ class CasperToast extends PolymerElement {
    * Closes the paper-toast component.
    */
   close () {
+    this.setAttribute('hidden', true);
     this.$.toast.close();
   }
 

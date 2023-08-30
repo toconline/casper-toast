@@ -1,5 +1,5 @@
 /*
-  - Copyright (c) 2014-2020 Cloudware S.A. All rights reserved.
+  - Copyright (c) 2014-2023 Cloudware S.A. All rights reserved.
   -
   - This file is part of casper-toast.
   -
@@ -18,141 +18,201 @@
   -
  */
 
-import '@polymer/paper-toast/paper-toast.js';
+import { LitElement, html, css } from 'lit';
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import '@cloudware-casper/casper-icons/casper-icon.js';
-import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
 
-class CasperToast extends PolymerElement {
 
-  static get template () {
+class CasperToast extends LitElement {
+  static properties = {
+    _content: {
+      type: String
+    },
+    /* Flag used for the opening/closing transition. */
+    _showDialog: {
+      type: Boolean,
+      attribute: 'show-dialog',
+      reflect: true
+    },
+    /* This value must be given in milliseconds. */
+    transitionDuration: {
+      type: Number
+    }
+  };
+
+  static styles = css`
+    :host {
+      --toast-background-color: var(--primary-color);
+      --toast-text-color: #FFF;
+      --toast-transition-duration: 300ms;
+
+      position: fixed;
+      bottom: 1rem;
+      left: 1rem;
+      width: calc(100% - 2rem);
+      opacity: 0;
+      transform: translateY(100px);
+      pointer-events: none;
+      z-index: 105;
+      transition: opacity var(--toast-transition-duration) ease, transform var(--toast-transition-duration) ease;
+    }
+
+    :host([show-dialog]) {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .toast {
+      position: static;
+      box-sizing: border-box;
+      width: 100%;
+      font-size: 0.875rem;
+      font-weight: 500;
+      padding: 1.142em;
+      color: var(--toast-text-color);
+      background-color: var(--toast-background-color);
+      box-shadow: rgba(0, 0, 0, 15%) 0 5px 20px;
+      border: none;
+      border-radius: 4px;
+      align-items: center;
+      gap: 1.142em;
+      transition: filter 1s ease;
+    }
+
+    .toast:hover {
+      cursor: pointer;
+      filter: brightness(80%);
+    }
+
+    .toast[open] {
+      display: flex;
+    }
+
+    .toast__content {
+      flex-grow: 1;
+      white-space: pre-line;
+    }
+
+    .toast__content a {
+      display: inline-block;
+      color: var(--toast-background-color);
+      background-color: var(--toast-text-color);
+      padding: 0.071em 0.428em;
+      text-decoration: underline;
+    }
+
+    .toast__close {
+      flex-shrink: 0;
+    }
+  `;
+
+  
+  constructor () {
+    super();
+
+    this._showDialog = false;
+    this.setInitialValues();
+  }
+
+
+
+  //***************************************************************************************//
+  //                              ~~~ LIT lifecycle  ~~~                                   //
+  //***************************************************************************************//
+
+  render () {
     return html`
-      <style>
-
-        :host {
-          --background-color: var(--primary-color);
-        }
-
-        :host[hidden] {
-          display: none;
-        }
-
-        paper-toast {
-          width: 100%;
-          display: flex;
-          font-weight: bold;
-          align-items: center;
-          --paper-toast-color: white;
-          --paper-toast-background-color: var(--background-color);
-        }
-
-        paper-toast:hover {
-          cursor: pointer;
-          filter: brightness(80%);
-          transition: filter 1s ease;
-        }
-
-        paper-toast casper-icon {
-          width: 20px;
-          height: 20px;
-          flex-shrink: 0;
-        }
-
-        paper-toast #content {
-          flex-grow: 1;
-          white-space: pre-line;
-        }
-
-        paper-toast #content a {
-          color: var(--background-color);
-          background-color: white;
-          padding: 2px 6px;
-          text-decoration: underline;
-        }
-
-      </style>
-
-      <paper-toast id="toast" fit-into="[[fitInto]]" duration="[[duration]]">
-        <div id="content"></div>
-        <casper-icon icon="fa-solid:times-circle"></casper-icon>
-      </paper-toast>
+      <dialog id="toast" class="toast" @click=${this.close.bind(this)}>
+        <div class="toast__content">${unsafeHTML(this._content)}</div>
+        <casper-icon class="toast__close" icon="fa-solid:times-circle"></casper-icon>
+      </dialog>
     `;
   }
 
-  static get properties () {
-    return {
-      /**
-       * The DOM element in which the component should fit into.
-       *
-       * @type {Object}
-       */
-      fitInto: {
-        type: Object
-      },
-      /**
-       * The duration in milliseconds that the component should stay open before auto-closing.
-       *
-       * @type {Number}
-       */
-      duration: {
-        type: Number,
-        value: 5000
-      },
-      /**
-       * The text / HTML that will be displayed in the paper-toast.
-       *
-       * @type {String}
-       */
-      text: {
-        type: String,
-        observer: '__textChanged'
-      },
-      /**
-       * The paper-toast's background color.
-       *
-       * @type {String}
-       */
-      backgroundColor: {
-        type: String,
-        observer: '__backgroundColorChanged'
-      }
-    };
+  willUpdate (changedProperties) {
+    if (changedProperties.has('transitionDuration')) {
+      this.style.setProperty('--toast-transition-duration', `${this.transitionDuration}ms`);
+    }
   }
 
-  ready () {
-    super.ready();
-
-    this.$.toast.addEventListener('click', () => this.close());
+  firstUpdated () {
+    this._toastEl = this.shadowRoot.getElementById('toast');
   }
 
+
+
+  //***************************************************************************************//
+  //                              ~~~ Public methods  ~~~                                  //
+  //***************************************************************************************//
+
+  setInitialValues () {
+    this._content = '';
+    this._toastDuration = 5000;
+    this.transitionDuration = 300;
+  }
+
+  setTypeBackgroundColor (type) {
+    let color = '';
+
+    switch (type) {
+      case true:
+      case 'success':
+        color = 'var(--status-green)';
+        break;
+      case false:
+      case 'error':
+        color = 'var(--status-red)';
+        break;
+      case 'warning':
+        color = 'var(--status-orange)';
+        break;
+      case 'info':
+      default:
+        color = 'var(--status-blue)';
+    }
+
+    this.style.setProperty('--toast-background-color', color);
+  }
+  
   /**
-   * Opens the paper-toast component.
+   * Shows the toast.
+   *
+   * @param {Object} options The options can include:
+   * - text: Text/html which will be displayed.
+   * - duration: The duration in milliseconds that the component should stay open before auto-closing.
+   * - background_color: Kept for backwards compatibility. Use "type" instead.
+   * - type: Sets the appropriate background-color. Available values are "success", "error", "warning" and "info".
    */
-  open () {
-    this.removeAttribute('hidden');
-    this.$.toast.open();
+  open (options) {
+    if (options.text) this._content = options.text;
+    if (options.duration) this._toastDuration = options.duration;
+    if (options.background_color) this.style.setProperty('--toast-background-color', options.background_color);
+    if (options.type && !Object.hasOwn(options, 'background_color')) this.setTypeBackgroundColor(options.type);
+
+    this._toastEl.show();
+    this._showDialog = true;
+
+    setTimeout(() => {
+      this.close();
+    }, this._toastDuration);
   }
 
   /**
-   * Closes the paper-toast component.
+   * Hides the toast.
    */
   close () {
-    this.setAttribute('hidden', true);
-    this.$.toast.close();
+    this._showDialog = false;
+
+    setTimeout(() => {
+      this._toastEl.close();
+      this.setInitialValues();
+    }, +this.transitionDuration);
   }
 
-  /**
-   * Observer that is fired when the text property changes.
-   */
-  __textChanged () {
-    this.$.content.innerHTML = this.text;
-  }
-
-  /**
-   * Observer that is fired when the background color property changes.
-   */
-  __backgroundColorChanged () {
-    this.style.setProperty('--background-color', this.backgroundColor);
+  isOpen () {
+    return this._toastEl.open;
   }
 }
 
-window.customElements.define('casper-toast', CasperToast);
+customElements.define('casper-toast', CasperToast);

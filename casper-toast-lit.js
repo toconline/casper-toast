@@ -5,14 +5,16 @@ import '@cloudware-casper/casper-icons/casper-icon.js';
 
 class CasperToastLit extends LitElement {
   static properties = {
-    _text: {
+    _content: {
       type: String
     },
+    /* Flag used for the opening/closing transition. */
     _showDialog: {
       type: Boolean,
       attribute: 'show-dialog',
       reflect: true
     },
+    /* This value must be given in milliseconds. */
     transitionDuration: {
       type: Number
     }
@@ -22,6 +24,7 @@ class CasperToastLit extends LitElement {
     :host {
       --toast-background-color: var(--primary-color);
       --toast-text-color: #FFF;
+      --toast-transition-duration: 300ms;
 
       position: fixed;
       bottom: 1rem;
@@ -29,25 +32,25 @@ class CasperToastLit extends LitElement {
       width: calc(100% - 2rem);
       opacity: 0;
       transform: translateY(100px);
-      transition: opacity var(--transition-duration, 300ms) linear, transform calc(var(--transition-duration, 300ms) + 700ms) linear;
       pointer-events: none;
+      transition: opacity var(--toast-transition-duration) linear, transform calc(var(--toast-transition-duration) + 700ms) linear;
     }
 
     :host([show-dialog]) {
       opacity: 1;
-      pointer-events: auto;
       transform: translateY(0);
+      pointer-events: auto;
       z-index: 105;
-      transition: opacity var(--transition-duration, 300ms) linear, transform var(--transition-duration, 300ms) linear;
+      transition: opacity var(--toast-transition-duration) linear, transform var(--toast-transition-duration) linear;
     }
 
     .toast {
       position: static;
       box-sizing: border-box;
       width: 100%;
-      padding: 1.142em;
       font-size: 0.875rem;
       font-weight: 500;
+      padding: 1.142em;
       color: var(--toast-text-color);
       background-color: var(--toast-background-color);
       box-shadow: rgba(0, 0, 0, 15%) 0 5px 20px;
@@ -56,11 +59,6 @@ class CasperToastLit extends LitElement {
       align-items: center;
       gap: 1.142em;
       transition: filter 1s ease;
-      display: flex;
-    }
-
-    .toast[open] {
-      display: flex;
     }
 
     .toast:hover {
@@ -68,12 +66,16 @@ class CasperToastLit extends LitElement {
       filter: brightness(80%);
     }
 
-    .toast__text {
+    .toast[open] {
+      display: flex;
+    }
+
+    .toast__content {
       flex-grow: 1;
       white-space: pre-line;
     }
 
-    .toast__text a {
+    .toast__content a {
       display: inline-block;
       color: var(--toast-background-color);
       background-color: var(--toast-text-color);
@@ -103,7 +105,7 @@ class CasperToastLit extends LitElement {
   render () {
     return html`
       <dialog id="toast" class="toast" @click=${this.close.bind(this)}>
-        <div class="toast__text">${unsafeHTML(this._text)}</div>
+        <div class="toast__content">${unsafeHTML(this._content)}</div>
         <casper-icon class="toast__close" icon="fa-solid:times-circle"></casper-icon>
       </dialog>
     `;
@@ -111,7 +113,7 @@ class CasperToastLit extends LitElement {
 
   willUpdate (changedProperties) {
     if (changedProperties.has('transitionDuration')) {
-      this.style.setProperty('--transition-duration', `${this.transitionDuration}ms`);
+      this.style.setProperty('--toast-transition-duration', `${this.transitionDuration}ms`);
     }
   }
 
@@ -126,15 +128,48 @@ class CasperToastLit extends LitElement {
   //***************************************************************************************//
 
   setInitialValues () {
-    this._text = '';
+    this._content = '';
     this._toastDuration = 5000;
     this.transitionDuration = 300;
   }
+
+  setTypeBackgroundColor (type) {
+    let color = '';
+
+    switch (type) {
+      case true:
+      case 'success':
+        color = 'var(--status-green)';
+        break;
+      case false:
+      case 'error':
+        color = 'var(--status-red)';
+        break;
+      case 'warning':
+        color = 'var(--status-orange)';
+        break;
+      case 'info':
+      default:
+        color = 'var(--status-blue)';
+    }
+
+    this.style.setProperty('--toast-background-color', color);
+  }
   
+  /**
+   * Shows the toast.
+   *
+   * @param {Object} options The options can include:
+   * - text: Text/html which will be displayed.
+   * - duration: The duration in milliseconds that the component should stay open before auto-closing.
+   * - background_color: Kept for backwards compatibility. Use "type" instead.
+   * - type: Sets the appropriate background-color. Available values are "success", "error", "warning" and "info".
+   */
   open (options) {
-    if (options.text) this._text = options.text;
+    if (options.text) this._content = options.text;
     if (options.duration) this._toastDuration = options.duration;
     if (options.background_color) this.style.setProperty('--toast-background-color', options.background_color);
+    if (options.type && !Object.hasOwn(options, 'background_color')) this.setTypeBackgroundColor(options.type);
 
     this._toastEl.show();
     this._showDialog = true;
@@ -144,13 +179,16 @@ class CasperToastLit extends LitElement {
     }, this._toastDuration);
   }
 
+  /**
+   * Hides the toast.
+   */
   close () {
     this._showDialog = false;
 
     setTimeout(() => {
       this._toastEl.close();
       this.setInitialValues();
-    }, this.transitionDuration);
+    }, +this.transitionDuration);
   }
 
   isOpen () {

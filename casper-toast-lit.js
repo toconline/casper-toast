@@ -33,15 +33,14 @@ class CasperToastLit extends LitElement {
       opacity: 0;
       transform: translateY(100px);
       pointer-events: none;
-      transition: opacity var(--toast-transition-duration) linear, transform calc(var(--toast-transition-duration) + 700ms) linear;
+      z-index: 105;
+      transition: opacity var(--toast-transition-duration) ease, transform var(--toast-transition-duration) ease;
     }
 
     :host([show-dialog]) {
       opacity: 1;
       transform: translateY(0);
       pointer-events: auto;
-      z-index: 105;
-      transition: opacity var(--toast-transition-duration) linear, transform var(--toast-transition-duration) linear;
     }
 
     .toast {

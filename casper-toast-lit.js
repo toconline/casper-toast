@@ -1,4 +1,5 @@
 import { LitElement, html, css } from 'lit';
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import '@cloudware-casper/casper-icons/casper-icon.js';
 
 
@@ -73,9 +74,10 @@ class CasperToastLit extends LitElement {
     }
 
     .toast__text a {
+      display: inline-block;
       color: var(--toast-background-color);
       background-color: var(--toast-text-color);
-      padding: 0.142em 0.428em;
+      padding: 0.071em 0.428em;
       text-decoration: underline;
     }
 
@@ -101,7 +103,7 @@ class CasperToastLit extends LitElement {
   render () {
     return html`
       <dialog id="toast" class="toast" @click=${this.close.bind(this)}>
-        <div class="toast__text">${this._text}</div>
+        <div class="toast__text">${unsafeHTML(this._text)}</div>
         <casper-icon class="toast__close" icon="fa-solid:times-circle"></casper-icon>
       </dialog>
     `;

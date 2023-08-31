@@ -51,6 +51,7 @@ class CasperToast extends LitElement {
       left: 1rem;
       width: calc(100% - 2rem);
       opacity: 0;
+      -webkit-transform: translateY(100px);
       transform: translateY(100px);
       pointer-events: none;
       z-index: 105;
@@ -59,6 +60,7 @@ class CasperToast extends LitElement {
 
     :host([show-dialog]) {
       opacity: 1;
+      -webkit-transform: translateY(0);
       transform: translateY(0);
       pointer-events: auto;
     }

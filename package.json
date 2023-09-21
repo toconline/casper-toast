@@ -3,6 +3,7 @@
   "version": "2.1.1",
   "main": "casper-toast.js",
   "dependencies": {
-    "@cloudware-casper/casper-icons": "^3.x"
+    "@cloudware-casper/casper-icons": "^3.x",
+    "lit": "^2.x"
   }
 }

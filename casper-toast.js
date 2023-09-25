@@ -75,6 +75,7 @@ class CasperToast extends LitElement {
       color: var(--toast-text-color);
       background-color: var(--toast-background-color);
       box-shadow: rgba(0, 0, 0, 15%) 0 5px 20px;
+      outline: none;
       border: none;
       border-radius: 4px;
       align-items: center;
@@ -158,11 +159,9 @@ class CasperToast extends LitElement {
     let color = '';
 
     switch (type) {
-      case true:
       case 'success':
         color = 'var(--status-green)';
         break;
-      case false:
       case 'error':
         color = 'var(--status-red)';
         break;
@@ -189,9 +188,13 @@ class CasperToast extends LitElement {
   open (options) {
     if (options.text) this._content = options.text;
     if (options.duration) this._toastDuration = options.duration;
-    if (options.background_color) this.style.setProperty('--toast-background-color', options.background_color);
-    if (options.type && !Object.hasOwn(options, 'background_color')) this.setTypeBackgroundColor(options.type);
 
+    if (options.background_color) {
+      this.style.setProperty('--toast-background-color', options.background_color);
+    } else {
+      this.setTypeBackgroundColor(options.type);
+    }
+  
     this._toastEl.show();
     this._showDialog = true;
 

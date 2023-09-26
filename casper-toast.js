@@ -127,7 +127,7 @@ class CasperToast extends LitElement {
   render () {
     return html`
       <dialog id="toast" class="toast" @click=${this.close.bind(this)}>
-        <div class="toast__content">${unsafeHTML(this._content)}</div>
+        <div id="content" class="toast__content">${unsafeHTML(this._content)}</div>
         <casper-icon class="toast__close" icon="fa-solid:times-circle"></casper-icon>
       </dialog>
     `;

@@ -169,8 +169,9 @@ class CasperToast extends LitElement {
         color = 'var(--status-orange)';
         break;
       case 'info':
-      default:
         color = 'var(--status-blue)';
+      default:
+        color = 'var(--primary-color)';
     }
 
     this.style.setProperty('--toast-background-color', color);

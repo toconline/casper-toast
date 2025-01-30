@@ -37,7 +37,7 @@
 
 import { LitElement, html, css } from 'lit';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-import '@cloudware-casper/casper-icons/casper-icon.js';
+import '@toconline/casper-icons/casper-icon.js';
 
 
 class CasperToast extends LitElement {
